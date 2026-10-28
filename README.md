@@ -9,6 +9,8 @@ information once per second and sends it to a Socket.IO server. A React dashboar
 ## How it works
 
 - `nodeClient` collects the data and sends it to the server in a `perfData` event.
+- `server` runs as a cluster of workers (one per CPU core) with sticky sessions, so a client always reaches the same
+  worker, and the cluster adapter lets every worker emit to every connected client.
 - `server` authenticates every connection with a token. Node clients join the `nodeClient` room and React clients
   join the `reactClient` room. The server forwards `perfData` to the `reactClient` room and announces when a
   machine goes offline with `connectedOrNot`.
@@ -22,6 +24,8 @@ cd server
 npm install
 npm start          # http://localhost:3000
 ```
+
+`npm run cluster-demo` runs `clusterTest.js`, a minimal example of Node's `cluster` module that is not part of the app.
 
 ```bash
 cd nodeClient

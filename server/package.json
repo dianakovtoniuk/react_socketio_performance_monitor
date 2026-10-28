@@ -1,15 +1,18 @@
 {
   "name": "server",
   "version": "1.0.0",
-  "description": "Socket.IO server for the performance monitor",
+  "description": "Clustered Socket.IO server for the performance monitor",
   "main": "servers.js",
   "scripts": {
-    "start": "node servers.js"
+    "start": "node servers.js",
+    "cluster-demo": "node clusterTest.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@socket.io/cluster-adapter": "^0.2.2",
+    "@socket.io/sticky": "^1.0.3",
     "socket.io": "^4.6.1"
   }
 }
