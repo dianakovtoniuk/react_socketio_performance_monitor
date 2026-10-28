@@ -1,7 +1,17 @@
-// The node program that captures local performance data.
-// Only the native `os` module is needed for this part.
+// The node program that captures local performance data
+// and sends it via socket to the server
+// Req:
+// - socket.io-client
 
 const os = require('os'); // native to node!
+const io = require('socket.io-client');
+
+const SERVER_URL = process.env.SERVER_URL || 'http://127.0.0.1:3000'; // where our server is listening
+const options = {
+    auth: {
+        token: process.env.NODE_CLIENT_TOKEN || '239rfaiskdfvq243EGa4q3wefsdad',
+    },
+};
 
 // We need a way to identify this machine to the server, for front-end usage.
 // We use the MAC address of the first internet-facing network interface, plus a random number
@@ -19,6 +29,27 @@ const getMachineId = () => {
     }
     return base + Math.floor(Math.random() * 100000);
 };
+
+const socket = io(SERVER_URL, options);
+socket.on('connect', () => {
+    console.log(`Connected to ${SERVER_URL}`);
+    const macA = getMachineId();
+
+    const perfDataInterval = setInterval(async () => {
+        // every second, get the performance data and emit it
+        const perfData = await performanceLoadData();
+        perfData.macA = macA;
+        socket.emit('perfData', perfData);
+    }, 1000);
+
+    socket.on('disconnect', () => {
+        clearInterval(perfDataInterval); // if we disconnect for any reason (this includes reconnects), stop ticking
+    });
+});
+
+socket.on('connect_error', (err) => {
+    console.log(`Could not connect to ${SERVER_URL}: ${err.message}`);
+});
 
 const cpuAverage = () => {
     const cpus = os.cpus();
@@ -86,12 +117,3 @@ const performanceLoadData = async () => {
         cpuLoad,
     };
 };
-
-const macA = getMachineId();
-
-// every second, get the performance data and print it
-setInterval(async () => {
-    const perfData = await performanceLoadData();
-    perfData.macA = macA;
-    console.log(perfData);
-}, 1000);

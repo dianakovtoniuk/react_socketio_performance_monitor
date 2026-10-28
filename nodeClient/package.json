@@ -1,12 +1,15 @@
 {
   "name": "nodeclient",
   "version": "1.0.0",
-  "description": "Collects performance data of this machine",
+  "description": "Collects performance data and sends it to the Socket.IO server",
   "main": "index.js",
   "scripts": {
     "start": "node index.js"
   },
   "keywords": [],
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "socket.io-client": "^4.6.1"
+  }
 }
