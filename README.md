@@ -79,6 +79,3 @@ react-client/    React dashboard (Create React App)
   src/utilities/            socket connection and canvas drawing helpers
 ```
 
-## Credits
-
-Based on the Socket.IO course by Robert Bunch.
