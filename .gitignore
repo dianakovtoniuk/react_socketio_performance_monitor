@@ -3,3 +3,4 @@ node_modules
 react-client/build
 *.log
 .env.local
+dist

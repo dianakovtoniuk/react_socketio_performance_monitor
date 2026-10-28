@@ -1,6 +1,6 @@
 # Performance Monitor
 
-Real-time performance monitor for your machines, built with Node.js, Socket.IO and React.
+Real-time performance monitor for your machines, built with TypeScript, Node.js, Socket.IO and React.
 Practice project from the Udemy course "SocketIO v4, with websockets - the details" by Robert Bunch.
 
 A small Node program (`nodeClient`) runs on every machine you want to watch, collects CPU, memory and system
@@ -13,6 +13,7 @@ information once per second and sends it to a Socket.IO server. A React dashboar
 - An "Offline" overlay when a machine stops reporting
 - Clustered Socket.IO server with sticky sessions and the cluster adapter
 - Token-based authentication for node clients and React clients
+- Written in TypeScript end to end, with the data and Socket.IO event types shared by all three parts
 
 ## Architecture
 
@@ -33,13 +34,13 @@ You need three terminals (Node.js 18 or newer):
 ```bash
 cd server
 npm install
-npm start          # Socket.IO server on http://localhost:3000
+npm run dev        # Socket.IO server on http://localhost:3000
 ```
 
 ```bash
 cd nodeClient
 npm install
-npm start          # start as many as you like, each one shows up as a separate machine
+npm run dev        # start as many as you like, each one shows up as a separate machine
 ```
 
 ```bash
@@ -48,8 +49,18 @@ npm install
 npm start          # dashboard on http://localhost:3001
 ```
 
-`npm run cluster-demo` in `server` runs `clusterTest.js`, a minimal example of Node's `cluster` module that is not
+`npm run dev` runs the TypeScript sources directly with `tsx`. For a production-style run, compile and start the
+compiled code instead:
+
+```bash
+npm run build
+npm start
+```
+
+`npm run cluster-demo` in `server` runs `clusterTest.ts`, a minimal example of Node's `cluster` module that is not
 part of the app.
+
+Every part has `npm run typecheck`, which checks the types without emitting any files.
 
 ## Configuration
 
@@ -69,13 +80,20 @@ connections out. Set your own tokens before exposing the server anywhere.
 ## Project structure
 
 ```
-nodeClient/      collects performance data and sends it to the server
-server/          clustered Socket.IO server
-  servers.js     cluster primary and workers
-  socketMain.js  socket event handlers
-  clusterTest.js standalone cluster demo
-react-client/    React dashboard (Create React App)
+shared/
+  types.ts         data and event types used by all three parts
+nodeClient/        collects performance data and sends it to the server
+  src/index.ts     socket connection and the one-second tick
+  src/perfData.ts  CPU, memory and system info
+server/            clustered Socket.IO server
+  src/servers.ts   cluster primary and workers
+  src/socketMain.ts  socket event handlers
+  src/clusterTest.ts standalone cluster demo
+react-client/      React dashboard (Create React App)
   src/perfDataComponents/   Widget, Cpu, Mem and Info components
   src/utilities/            socket connection and canvas drawing helpers
 ```
+
+The event types in `shared/types.ts` are imported with `import type` by the node client, the server and the React
+client, so a change to an event or to the data is checked at compile time in all three places.
 

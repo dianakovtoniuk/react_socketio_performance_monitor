@@ -1,16 +1,17 @@
 import { useEffect, useState } from 'react';
+import type { PerfData } from '../../shared/types';
 import socket from './utilities/socketConnection';
 import Widget from './perfDataComponents/Widget';
 
 function App() {
-  const [performanceData, setPerformanceData] = useState({});
+  const [performanceData, setPerformanceData] = useState<Record<string, PerfData>>({});
 
   useEffect(() => {
     // the latest data of every machine, kept OUTSIDE of state so a new message does not cause a re-render
-    const perfMachineData = {};
+    const perfMachineData: Record<string, PerfData> = {};
 
     // one line of data came through for one machine: update our local variable
-    const onPerfData = (data) => {
+    const onPerfData = (data: PerfData) => {
       perfMachineData[data.macA] = data;
     };
     socket.on('perfData', onPerfData);
