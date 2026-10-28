@@ -1,5 +1,9 @@
 # Performance Monitor
 
+## Demo
+
+![Dashboard](react-client/public/dashboard.png)
+
 Real-time performance monitor for your machines, built with TypeScript, Node.js, Socket.IO and React.
 Practice project from the Udemy course "SocketIO v4, with websockets - the details" by Robert Bunch.
 
